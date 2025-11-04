@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <title>PC Lab Bolivia - Arma tu PC perfecta</title>
+  <style>
+    /* =============================================================
+       Tema y Variables
+    ============================================================= */
+    :root{
+      --color-primary:#1e40af;--color-primary-2:#4f46e5;--color-primary-hover:#1e3a8a;
+      --color-success:#10b981;--color-warning:#f59e0b;--color-danger:#ef4444;
+      --color-bg:#f8fafc;--color-surface:#ffffff;--color-elev:#ffffffcc;
+      --color-text:#0f172a;--color-text-secondary:#64748b;--color-border:#e5e7eb;
+      --shadow-1:0 4px 12px rgba(0,0,0,.08);
+      --shadow-2:0 10px 30px rgba(0,0,0,.12);
+      --radius:16px;
+    }
+    [data-theme="dark"]{
+      --color-bg:#0b1220;--color-surface:#0f172a;--color-elev:#0f172acc;
+      --color-text:#e5e7eb;--color-text-secondary:#94a3b8;--color-border:#1f2937;
+      --shadow-1:0 4px 12px rgba(0,0,0,.5);
+      --shadow-2:0 10px 30px rgba(0,0,0,.6);
+    }
+
+    /* =============================================================
+       Reset básico
+    ============================================================= */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Inter,system-ui,sans-serif;background:var(--color-bg);color:var(--color-text);line-height:1.6}
+    img{max-width:100%;display:block}
+    button{font:inherit}
+
+    /* =============================================================
+       Cabecera y navegación
+    ============================================================= */
+    .header{position:sticky;top:0;z-index:1000;background:linear-gradient(135deg,var(--color-surface) 0%,rgba(255,255,255,.6) 100%);backdrop-filter:saturate(140%) blur(6px);border-bottom:2px solid var(--color-primary);box-shadow:var(--shadow-1)}
+    .container{max-width:1200px;margin:0 auto;padding:0 16px}
+    .header-content{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+
+    .logo{font-size:28px;font-weight:800;display:flex;align-items:center;gap:8px;letter-spacing:.3px;background:linear-gradient(135deg,var(--color-primary) 0%,var(--color-success) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+    .nav{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .nav-btn{background:none;border:none;padding:8px 12px;border-radius:10px;color:var(--color-text-secondary);cursor:pointer;transition:all .2s}
+    .nav-btn:hover,.nav-btn.active{background:var(--color-primary);color:#fff;transform:translateY(-1px);box-shadow:0 4px 8px rgba(30,64,175,.3)}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:0;border-radius:12px;cursor:pointer;font-weight:600;transition:all .2s}
+    .btn-primary{background:linear-gradient(135deg,var(--color-primary) 0%,var(--color-primary-2) 100%);color:#fff;box-shadow:0 6px 14px rgba(30,64,175,.35)}
+    .btn-primary:hover{transform:translateY(-2px)}
+    .btn-ghost{background:transparent;color:var(--color-text-secondary)}
+
+    .theme-toggle{border:1px solid var(--color-border)}
+    .theme-toggle svg{width:18px;height:18px}
+
+    /* =============================================================
+       Hero con elementos gráficos (SVG) y CTA
+    ============================================================= */
+    .hero{position:relative;overflow:hidden}
+    .hero-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;padding:36px 0}
+    .hero-badges{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+    .badge{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--color-border);color:var(--color-text-secondary);background:var(--color-elev)}
+    .hero h1{font-size:40px;line-height:1.15;margin-bottom:10px}
+    .hero p{font-size:18px;color:var(--color-text-secondary);margin-bottom:16px}
+
+    .hero-art{position:relative;isolation:isolate}
+    .blob{position:absolute;inset:auto;filter:blur(40px);opacity:.6;z-index:-1}
+    .blob.one{top:-30px;right:-60px;width:240px;height:240px;background:radial-gradient(closest-side,#22d3ee,transparent)}
+    .blob.two{bottom:-50px;left:-60px;width:280px;height:280px;background:radial-gradient(closest-side,#60a5fa,transparent)}
+
+    .chip{width:100%;max-width:420px;margin-inline:auto;background:linear-gradient(180deg,#0b1020,#121a35);border:1px solid #1f2a4a;border-radius:24px;padding:22px;box-shadow:inset 0 0 40px rgba(80,120,255,.2),0 20px 60px rgba(0,0,0,.25)}
+    .chip svg{width:100%;height:auto}
+
+    /* =============================================================
+       Secciones / tarjetas
+    ============================================================= */
+    .main{padding:28px 0}
+    .section{display:none}
+    .section.active{display:block}
+    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);padding:24px;margin-bottom:18px;box-shadow:var(--shadow-1);transition:transform .25s ease,box-shadow .25s ease}
+    .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-2)}
+    .card-title{font-size:22px;font-weight:700;margin-bottom:8px}
+
+    /* =============================================================
+       Contadores animados (stats)
+    ============================================================= */
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+    .stat{padding:18px;border:1px dashed var(--color-border);border-radius:14px;background:linear-gradient(180deg,var(--color-surface),rgba(255,255,255,.55))}
+    .stat .icon{font-size:22px}
+    .stat .num{font-size:26px;font-weight:800}
+    .stat .label{font-size:13px;color:var(--color-text-secondary)}
+
+    /* =============================================================
+       Catálogo con filtros + tarjetas
+    ============================================================= */
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .input{padding:10px 12px;border:1px solid var(--color-border);border-radius:10px;background:var(--color-surface);color:var(--color-text)}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .product{position:relative;display:flex;flex-direction:column;gap:10px}
+    .badge-sale{position:absolute;top:10px;left:10px;background:#16a34a;color:#fff;font-size:12px;padding:4px 8px;border-radius:999px;box-shadow:0 6px 14px rgba(22,163,74,.35)}
+    .product .thumb{background:linear-gradient(180deg,#0ea5e9,#0369a1);padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 0 24px rgba(255,255,255,.15)}
+    .product .meta{display:flex;justify-content:space-between;align-items:center}
+    .price{font-weight:800}
+    .features{font-size:13px;color:var(--color-text-secondary)}
+    .actions{display:flex;gap:8px}
+
+    /* =============================================================
+       Gráfico de barras (CSS puro)
+    ============================================================= */
+    .chart{margin-top:8px;border:1px solid var(--color-border);border-radius:12px;padding:12px}
+    .bar{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;margin:6px 0}
+    .bar .label{font-size:13px;color:var(--color-text-secondary)}
+    .bar .track{height:12px;background:linear-gradient(90deg,#0ea5e930,#22d3ee30);border:1px solid var(--color-border);border-radius:999px;overflow:hidden}
+    .bar .fill{height:100%;background:linear-gradient(90deg,#22d3ee,#3b82f6)}
+
+    /* =============================================================
+       Modal (accesible) + Toasts
+    ============================================================= */
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:1000;align-items:center;justify-content:center}
+    .modal.active{display:flex}
+    .modal-content{background:var(--color-surface);border:1px solid var(--color-border);border-radius:18px;box-shadow:var(--shadow-2);padding:24px;max-width:520px;width:92%;position:relative}
+    .modal-close{position:absolute;top:10px;right:10px;background:transparent;border:0;font-size:22px;color:var(--color-text-secondary);cursor:pointer}
+
+    .toast-wrap{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:10px;z-index:2000}
+    .toast{display:flex;gap:10px;align-items:center;background:var(--color-elev);border:1px solid var(--color-border);box-shadow:var(--shadow-1);padding:12px 14px;border-radius:12px;min-width:220px}
+    .toast .title{font-weight:700}
+
+    /* =============================================================
+       Accesibilidad / focus
+    ============================================================= */
+    .nav-btn:focus-visible,.btn:focus-visible,.modal-close:focus-visible,.input:focus-visible{outline:3px solid var(--color-primary);outline-offset:2px}
+
+    /* =============================================================
+       FAB (botón flotante)
+    ============================================================= */
+    .fab{position:fixed;bottom:20px;left:20px;border-radius:999px;box-shadow:var(--shadow-2)}
+
+    /* =============================================================
+       Footer
+    ============================================================= */
+    footer{margin-top:24px;padding:22px 0;border-top:1px dashed var(--color-border);color:var(--color-text-secondary);font-size:14px}
+
+    /* =============================================================
+       Constructor de PC (Stepper y selección)
+    ============================================================= */
+    .stepper{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+    .step{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--color-border);border-radius:999px;background:var(--color-surface);opacity:.95}
+    .step .dot{width:22px;height:22px;border-radius:999px;background:var(--color-border);display:inline-flex;align-items:center;justify-content:center;font-weight:800}
+    .step.active{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(30,64,175,.12)}
+    .step.active .dot{background:var(--color-primary);color:#fff}
+    .selectable{cursor:pointer}
+    .selectable.selected{outline:3px solid var(--color-primary)}
+
+    /* =============================================================
+       Responsive
+    ============================================================= */
+    @media (max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}.hero-wrap{grid-template-columns:1fr}}
+    @media (max-width:640px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.hero h1{font-size:32px}}
+  </style>
+</head>
+<body>
+  <!-- =========================================================== -->
+  <!-- Header -->
+  <!-- =========================================================== -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">🔬 PC Lab Bolivia 🇧🇴</div>
+        <nav class="nav" aria-label="Secciones principales">
+          <button type="button" class="nav-btn active" onclick="showSection(event,'guide')">Guía</button>
+          <button type="button" class="nav-btn" onclick="showSection(event,'catalog')">Catálogo</button>
+          <button type="button" class="nav-btn" onclick="showSection(event,'builder')">Constructor</button>
+          <button type="button" class="btn btn-ghost theme-toggle" id="themeBtn" aria-pressed="false" title="Cambiar tema" onclick="toggleTheme()">
+            <span id="themeIcon" aria-hidden="true">🌙</span> Tema
+          </button>
+          <button class="btn btn-primary" onclick="openRegisterModal()">Registrarse 📝</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================== -->
+  <!-- Hero con elementos gráficos -->
+  <!-- =========================================================== -->
+  <section class="hero">
+    <div class="container hero-wrap">
+      <div>
+        <div class="hero-badges">
+          <span class="badge">Compatibilidad guiada</span>
+          <span class="badge">Precios en Bs (referencial)</span>
+          <span class="badge">Aprende & arma</span>
+        </div>
+        <h1>Arma tu <span style="background:linear-gradient(90deg,#22d3ee,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent">PC perfecta</span> sin complicarte</h1>
+        <p>Encuentra componentes, verifica compatibilidad y guarda tus armados. Hecho para Bolivia, con soporte local.</p>
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn btn-primary" onclick="showSectionFromHero('catalog')">Construir ahora ⚙️</button>
+          <button class="btn btn-ghost" onclick="showSectionFromHero('guide')">Ver guía ▶︎</button>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <div class="icon">👥</div>
+            <div class="num" data-count="usuarios" aria-live="polite">0</div>
+            <div class="label">Usuarios registrados</div>
+          </div>
+          <div class="stat">
+            <div class="icon">🧰</div>
+            <div class="num" data-count="armados">0</div>
+            <div class="label">Armados guardados</div>
+          </div>
+          <div class="stat">
+            <div class="icon">🧩</div>
+            <div class="num" data-count="componentes">0</div>
+            <div class="label">Componentes en catálogo</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="blob one" aria-hidden="true"></div>
+        <div class="blob two" aria-hidden="true"></div>
+        <!-- Tarjeta 3D estilizada de un "chip" con SVG -->
+        <div class="chip" aria-hidden="true">
+          <svg viewBox="0 0 560 360" role="img" aria-label="Ilustración de chip">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0%" stop-color="#22d3ee"/>
+                <stop offset="100%" stop-color="#4f46e5"/>
+              </linearGradient>
+              <linearGradient id="g2" x1="0" x2="1">
+                <stop offset="0%" stop-color="#60a5fa"/>
+                <stop offset="100%" stop-color="#22d3ee"/>
+              </linearGradient>
+            </defs>
+            <rect x="40" y="40" width="480" height="280" rx="24" fill="#0b132b" stroke="#1f2a4a"/>
+            <rect x="90" y="85" width="380" height="190" rx="14" fill="#0e1a36" stroke="#243b63"/>
+            <rect x="110" y="105" width="340" height="150" rx="12" fill="#0f1f45" stroke="#315a9b"/>
+            <g>
+              <rect x="140" y="130" width="140" height="100" rx="10" fill="url(#g1)" opacity=".95"/>
+              <rect x="305" y="130" width="120" height="22" rx="6" fill="url(#g2)"/>
+              <rect x="305" y="160" width="120" height="22" rx="6" fill="url(#g2)" opacity=".8"/>
+              <rect x="305" y="190" width="120" height="22" rx="6" fill="url(#g2)" opacity=".6"/>
+            </g>
+            <!-- Pines -->
+            <g fill="#1f2a4a">
+              <!-- top -->
+              <rect x="80" y="28" width="20" height="10" rx="3"/><rect x="110" y="28" width="20" height="10" rx="3"/><rect x="140" y="28" width="20" height="10" rx="3"/>
+              <rect x="170" y="28" width="20" height="10" rx="3"/><rect x="200" y="28" width="20" height="10" rx="3"/><rect x="230" y="28" width="20" height="10" rx="3"/>
+              <rect x="260" y="28" width="20" height="10" rx="3"/><rect x="290" y="28" width="20" height="10" rx="3"/><rect x="320" y="28" width="20" height="10" rx="3"/>
+              <rect x="350" y="28" width="20" height="10" rx="3"/><rect x="380" y="28" width="20" height="10" rx="3"/><rect x="410" y="28" width="20" height="10" rx="3"/>
+              <!-- bottom -->
+              <rect x="80" y="322" width="20" height="10" rx="3"/><rect x="110" y="322" width="20" height="10" rx="3"/><rect x="140" y="322" width="20" height="10" rx="3"/>
+              <rect x="170" y="322" width="20" height="10" rx="3"/><rect x="200" y="322" width="20" height="10" rx="3"/><rect x="230" y="322" width="20" height="10" rx="3"/>
+              <rect x="260" y="322" width="20" height="10" rx="3"/><rect x="290" y="322" width="20" height="10" rx="3"/><rect x="320" y="322" width="20" height="10" rx="3"/>
+              <rect x="350" y="322" width="20" height="10" rx="3"/><rect x="380" y="322" width="20" height="10" rx="3"/><rect x="410" y="322" width="20" height="10" rx="3"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== -->
+  <!-- Secciones principales -->
+  <!-- =========================================================== -->
+  <main class="main">
+    <div class="container">
+      <!-- Guía -->
+      <section id="guide" class="section active">
+        <div class="card">
+          <h2 class="card-title">🎓 Bienvenido a PC Lab Bolivia</h2>
+          <p style="font-size:1.05rem;color:var(--color-text-secondary)">Tu guía completa para armar la PC perfecta. Encuentra componentes, verifica compatibilidad y aprende a ensamblar tu computadora desde cero.</p>
+          <ul style="margin-top:12px;color:var(--color-text-secondary)">
+            <li>✔︎ Empezá por el objetivo (gaming, oficina, edición).</li>
+            <li>✔︎ Elegí CPU → placa madre (socket / chipset) → RAM.</li>
+            <li>✔︎ GPU según resolución / FPS; PSU con margen del 25%.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Catálogo -->
+      <section id="catalog" class="section" aria-labelledby="catalogTitle">
+        <div class="card">
+          <h2 id="catalogTitle" class="card-title">📦 Catálogo de Componentes</h2>
+          <div class="toolbar" role="region" aria-label="Filtros de catálogo">
+            <input id="search" class="input" type="search" placeholder="Buscar componente... (ej. Ryzen, RTX 3060)" oninput="renderCatalog()"/>
+            <select id="category" class="input" onchange="renderCatalog()">
+              <option value="all">Todas las categorías</option>
+              <option value="CPU">CPU</option>
+              <option value="MB">Placa madre</option>
+              <option value="RAM">RAM</option>
+              <option value="GPU">GPU</option>
+              <option value="SSD">SSD</option>
+            </select>
+            <button class="btn btn-primary" onclick="randomBuild()">Armar sugerencia 🔀</button>
+          </div>
+
+          <div id="catalogGrid" class="grid" aria-live="polite"></div>
+
+          <!-- Gráfico simple: rendimiento relativo de lo filtrado -->
+          <div class="chart" id="chart" aria-label="Gráfico de rendimiento relativo"></div>
+        </div>
+      </section>
+
+      <!-- Constructor de PC -->
+      <section id="builder" class="section" aria-labelledby="builderTitle">
+        <div class="card">
+          <h2 id="builderTitle" class="card-title">🛠️ Constructor de PC</h2>
+
+          <div id="builderSteps" class="stepper" role="tablist" aria-label="Pasos del constructor"></div>
+
+          <div id="builderStepContent" aria-live="polite"></div>
+
+          <div id="builderActions" style="display:flex;gap:10px;margin-top:12px">
+            <button class="btn btn-ghost" onclick="builderPrev()">← Atrás</button>
+            <button class="btn btn-primary" id="builderNextBtn" onclick="builderNext()">Siguiente →</button>
+          </div>
+
+          <div id="builderSummary" class="card" style="margin-top:12px">
+            <h3 style="margin-bottom:6px">Resumen</h3>
+            <div id="builderSummaryList"></div>
+            <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+              <input id="buildName" class="input" style="flex:1" placeholder="Nombre del armado (opcional)" />
+              <button class="btn btn-primary" onclick="saveBuild()">Guardar armado 💾</button>
+            </div>
+            <div id="savedBuilds" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- =========================================================== -->
+  <!-- Modal Registro -->
+  <!-- =========================================================== -->
+  <div id="registerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="registerTitle">
+    <div class="modal-content" tabindex="-1">
+      <button class="modal-close" type="button" aria-label="Cerrar" onclick="closeRegisterModal()">✕</button>
+      <h2 id="registerTitle" class="card-title" style="margin-bottom:6px">📝 Regístrate en PC Lab Bolivia</h2>
+      <p style="color:var(--color-text-secondary);margin-bottom:12px">Únete a nuestra comunidad y accede a beneficios exclusivos</p>
+
+      <form id="registerForm" onsubmit="handleRegister(event)" autocomplete="on">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <label class="form-label" for="firstName">Nombre *</label>
+            <input class="input" id="firstName" name="firstName" type="text" required placeholder="Tu nombre" autocomplete="given-name"/>
+          </div>
+          <div>
+            <label class="form-label" for="lastName">Primer Apellido *</label>
+            <input class="input" id="lastName" name="lastName" type="text" required placeholder="Tu apellido" autocomplete="family-name"/>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+          <div>
+            <label class="form-label" for="phone">Número Telefónico *</label>
+            <input class="input" id="phone" name="phone" type="tel" inputmode="tel" required placeholder="+591 7xxxxxxx" pattern="^(\+?591[\s-]?)?\d{7,8}$" title="Ingresa 7 u 8 dígitos. Opcional: antecede con +591." autocomplete="tel"/>
+          </div>
+          <div>
+            <label class="form-label" for="email">Correo Electrónico *</label>
+            <input class="input" id="email" name="email" type="email" required placeholder="tu@email.com" autocomplete="email"/>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:12px">Registrarse Ahora 🚀</button>
+      </form>
+
+      <div class="card" style="margin-top:12px">
+        <p style="font-size:.95rem;color:var(--color-text-secondary);margin-bottom:10px"><strong>¿Prefieres registrarte desde tu móvil?</strong><br/>Escanea este QR</p>
+        <img src="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/02fed8bbeff4fb5ae51147f61b4a462e/ccb74382-9d09-4e5f-b5dd-43ff5c64c565/4caeef53.png" alt="Código QR para registro en PC Lab Bolivia"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toasts -->
+  <div class="toast-wrap" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Botón flotante de registro -->
+  <button class="btn btn-primary fab" onclick="openRegisterModal()" title="Registrarme"><span>➕</span></button>
+
+  <footer>
+    <div class="container">Hecho con ❤️ en Bolivia • <span id="year"></span> • <a href="#" style="color:inherit">Términos</a> · <a href="#" style="color:inherit">Privacidad</a></div>
+  </footer>
+
+  <script>
+    // ============================================================
+    // Utilidades
+    // ============================================================
+    const qs = s => document.querySelector(s);
+    const qsa = s => Array.from(document.querySelectorAll(s));
+
+    function showSection(ev, sectionId){
+      qsa('.section').forEach(s=>s.classList.remove('active'));
+      qs('#'+sectionId).classList.add('active');
+      qsa('.nav-btn').forEach(b=>b.classList.remove('active'));
+      if(ev && ev.currentTarget) ev.currentTarget.classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+      if(sectionId==='builder'){ builderRender(); }
+    }
+    function showSectionFromHero(id){
+      const btn = qsa('.nav-btn').find(b=> b.textContent.trim().toLowerCase().includes(id === 'catalog' ? 'catálogo' : 'guía'));
+      if(btn) btn.click(); else showSection(null,id);
+    }
+
+    // Tema (persistente)
+    function toggleTheme(){
+      const html = document.documentElement;
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('pclabTheme', next);
+      qs('#themeBtn').setAttribute('aria-pressed', next === 'dark');
+      qs('#themeIcon').textContent = next === 'dark' ? '☀️' : '🌙';
+    }
+    (function initTheme(){
+      const saved = localStorage.getItem('pclabTheme');
+      if(saved){ document.documentElement.setAttribute('data-theme', saved); qs('#themeBtn').setAttribute('aria-pressed', saved==='dark'); qs('#themeIcon').textContent = saved==='dark'?'☀️':'🌙'; }
+    })();
+
+    // Año footer
+    qs('#year').textContent = new Date().getFullYear();
+
+    // ============================================================
+    // Modal accesible con trampa de foco y Escape
+    // ============================================================
+    let lastFocused = null; let keydownHandler = null;
+    function openRegisterModal(){
+      const modal = qs('#registerModal');
+      const content = modal.querySelector('.modal-content');
+      lastFocused = document.activeElement;
+      modal.classList.add('active');
+      const focusables = content.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+      const first=focusables[0], last=focusables[focusables.length-1];
+      keydownHandler = (e)=>{
+        if(e.key==='Escape'){ closeRegisterModal(); }
+        if(e.key==='Tab' && focusables.length){
+          if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+          else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+        }
+      };
+      document.addEventListener('keydown', keydownHandler);
+      (first||content).focus();
+    }
+    function closeRegisterModal(){
+      const modal = qs('#registerModal');
+      modal.classList.remove('active');
+      if(keydownHandler){ document.removeEventListener('keydown', keydownHandler); keydownHandler=null; }
+      if(lastFocused) lastFocused.focus({preventScroll:true});
+    }
+    document.addEventListener('click', (ev)=>{ const modal = qs('#registerModal'); if(ev.target===modal){ closeRegisterModal(); } });
+
+    // ============================================================
+    // Toasts
+    // ============================================================
+    function toast(title, msg, variant='info'){
+      const wrap = qs('#toasts');
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.innerHTML = `<div>${variant==='success'?'✅':variant==='error'?'⛔️':'ℹ️'}</div><div><div class="title">${title}</div><div style="font-size:13px;color:var(--color-text-secondary)">${msg}</div></div>`;
+      wrap.appendChild(el);
+      setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(6px)'; setTimeout(()=>el.remove(),300); }, 3500);
+    }
+
+    // ============================================================
+    // Registro con deduplicación
+    // ============================================================
+    function handleRegister(event){
+      event.preventDefault();
+      const firstName = qs('#firstName').value.trim();
+      const lastName  = qs('#lastName').value.trim();
+      const phone     = qs('#phone').value.trim();
+      const email     = qs('#email').value.trim().toLowerCase();
+      const key='pclabUsers';
+      const users = JSON.parse(localStorage.getItem(key)||'[]');
+      if(users.some(u => (u.email||'').toLowerCase()===email)){
+        toast('Registro duplicado', `Ya existe un registro con ${email}.`, 'error');
+        return;
+      }
+      const userData = {firstName,lastName,phone,email,registeredAt:new Date().toISOString()};
+      users.push(userData);
+      localStorage.setItem(key, JSON.stringify(users));
+      toast('¡Bienvenido '+firstName+'!','Recibirás novedades en: '+email,'success');
+      qs('#registerForm').reset();
+      closeRegisterModal();
+      updateStats();
+    }
+
+    // ============================================================
+    // Datos de catálogo (ejemplo con precios referenciales)
+    // ============================================================
+    const PRODUCTS = [
+      {id:'cpu-5600', name:'AMD Ryzen 5 5600', category:'CPU', price:1499, perf:78, badge:'Recomendado', features:['6C/12T','Boost 4.4GHz','AM4'], icon:'cpu', socket:'AM4', ramSupport:['DDR4']},
+      {id:'cpu-12400f', name:'Intel Core i5-12400F', category:'CPU', price:1699, perf:82, badge:'Equilibrado', features:['6C/12T','Boost 4.4GHz','LGA1700'], icon:'cpu', socket:'LGA1700', ramSupport:['DDR4','DDR5']},
+
+      {id:'mb-b550', name:'MSI B550 Tomahawk', category:'MB', price:999, perf:58, badge:'AM4', features:['B550','ATX','DDR4'], icon:'mb', socket:'AM4', ramType:'DDR4'},
+      {id:'mb-b450m', name:'ASUS Prime B450M-A', category:'MB', price:699, perf:52, badge:'Económica', features:['B450M','mATX','DDR4'], icon:'mb', socket:'AM4', ramType:'DDR4'},
+      {id:'mb-b660', name:'ASUS Prime B660M', category:'MB', price:1199, perf:60, badge:'Intel DDR4', features:['B660M','mATX','DDR4'], icon:'mb', socket:'LGA1700', ramType:'DDR4'},
+      {id:'mb-b760', name:'Gigabyte B760 DS3H', category:'MB', price:1399, perf:62, badge:'Intel DDR5', features:['B760','ATX','DDR5'], icon:'mb', socket:'LGA1700', ramType:'DDR5'},
+
+      {id:'ram-16', name:'RAM 16GB (2x8) 3200', category:'RAM', price:399, perf:50, badge:'Dual Channel', features:['DDR4 3200','CL16'], icon:'ram', ramType:'DDR4'},
+      {id:'ram-32-ddr5', name:'RAM 32GB (2x16) 5600', category:'RAM', price:799, perf:65, badge:'DDR5', features:['DDR5 5600','CL40'], icon:'ram', ramType:'DDR5'},
+
+      {id:'gpu-3060', name:'NVIDIA RTX 3060 12GB', category:'GPU', price:3599, perf:75, badge:'1080p Alto', features:['Ray Tracing','DLSS','12GB GDDR6'], icon:'gpu'},
+      {id:'gpu-6600', name:'Radeon RX 6600 8GB', category:'GPU', price:2999, perf:72, badge:'1080p', features:['8GB GDDR6','RDNA2'], icon:'gpu'},
+
+      {id:'ssd-1tb', name:'SSD NVMe 1TB Gen3', category:'SSD', price:549, perf:60, badge:'Mejor valor', features:['3500MB/s','NVMe M.2'], icon:'ssd'}
+    ];
+
+    function svgIcon(kind){
+      if(kind==='cpu') return `<svg width="100%" viewBox="0 0 140 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="10" y="10" width="120" height="70" rx="10" fill="#0b132b" stroke="#334155"/><rect x="28" y="22" width="84" height="46" rx="8" fill="#111827" stroke="#475569"/><rect x="36" y="30" width="68" height="30" rx="6" fill="url(#gradCPU)"/><defs><linearGradient id="gradCPU" x1="0" x2="1"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#4f46e5"/></linearGradient></defs></svg>`;
+      if(kind==='gpu') return `<svg width="100%" viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="8" y="18" width="124" height="54" rx="10" fill="#0b132b" stroke="#334155"/><circle cx="50" cy="45" r="16" fill="#0f172a" stroke="#475569"/><circle cx="92" cy="45" r="16" fill="#0f172a" stroke="#475569"/><circle cx="50" cy="45" r="8" fill="#22d3ee"/><circle cx="92" cy="45" r="8" fill="#22d3ee"/></svg>`;
+      if(kind==='ram') return `<svg width="100%" viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="12" y="34" width="116" height="22" rx="6" fill="#0b132b" stroke="#334155"/><rect x="18" y="38" width="22" height="14" rx="3" fill="#1f2937"/><rect x="44" y="38" width="22" height="14" rx="3" fill="#1f2937"/><rect x="70" y="38" width="22" height="14" rx="3" fill="#1f2937"/><rect x="96" y="38" width="22" height="14" rx="3" fill="#1f2937"/></svg>`;
+      if(kind==='ssd') return `<svg width="100%" viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="18" y="30" width="104" height="30" rx="8" fill="#0b132b" stroke="#334155"/><rect x="24" y="36" width="40" height="18" rx="4" fill="#111827"/><rect x="68" y="36" width="46" height="18" rx="4" fill="#111827"/></svg>`;
+      if(kind==='mb') return `<svg width="100%" viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="10" y="12" width="120" height="66" rx="10" fill="#0b132b" stroke="#334155"/><rect x="20" y="20" width="44" height="20" rx="4" fill="#111827"/><rect x="70" y="20" width="50" height="10" rx="3" fill="#1f2937"/><rect x="70" y="34" width="50" height="10" rx="3" fill="#1f2937"/><rect x="20" y="46" width="100" height="24" rx="6" fill="#0f172a" stroke="#475569"/></svg>`;
+      return '';
+    }
+
+    function money(n){ return new Intl.NumberFormat('es-BO',{style:'currency',currency:'BOB',maximumFractionDigits:0}).format(n); }
+
+    function renderCatalog(){
+      const grid = qs('#catalogGrid');
+      const chart = qs('#chart');
+      const term = qs('#search').value.toLowerCase();
+      const cat  = qs('#category').value;
+      const items = PRODUCTS.filter(p => (cat==='all' || p.category===cat) && (!term || p.name.toLowerCase().includes(term)));
+      grid.innerHTML = items.map(p => `
+        <div class="product card" data-id="${p.id}">
+          <span class="badge-sale">${p.badge}</span>
+          <div class="thumb">${svgIcon(p.icon)}</div>
+          <div class="meta"><strong>${p.name}</strong><span class="price">${money(p.price)}</span></div>
+          <div class="features">${p.features.join(' · ')}</div>
+          <div class="actions">
+            <button class="btn btn-ghost" onclick="toast('Detalles','Pronto agregaremos ficha técnica.')">Ver detalles</button>
+            <button class="btn btn-primary" onclick="toast('Añadido','Guardado en tu lista (local).','success')">Añadir a lista</button>
+          </div>
+        </div>`).join('');
+
+      // Render gráfico de barras (rendimiento relativo)
+      const perfSorted = [...items].sort((a,b)=>b.perf-a.perf).slice(0,6);
+      const max = Math.max( ...(perfSorted.map(i=>i.perf)), 100 );
+      chart.innerHTML = perfSorted.length ? perfSorted.map(i=>`
+        <div class="bar" role="img" aria-label="${i.name} ${i.perf}%">
+          <div class="label">${i.name}</div>
+          <div class="track"><div class="fill" style="width:${(i.perf/max)*100}%"></div></div>
+        </div>`).join('') : '<em style="color:var(--color-text-secondary)">No hay resultados</em>';
+
+      // Actualiza contador de componentes
+      updateStats();
+    }
+
+    function randomBuild(){
+      const pick = cat => PRODUCTS.filter(p=>p.category===cat)[Math.floor(Math.random()*PRODUCTS.filter(p=>p.category===cat).length)];
+      const cpu = pick('CPU'); const gpu=pick('GPU'); const ram=pick('RAM'); const ssd=pick('SSD');
+      const total = [cpu,gpu,ram,ssd].reduce((a,b)=>a+b.price,0);
+      toast('Sugerencia de armado', `${cpu.name} + ${gpu.name} + ${ram.name} + ${ssd.name} → Total aprox: ${money(total)}`,'info');
+    }
+
+    // ============================================================
+    // Stats (conteo animado)
+    // ============================================================
+    function updateStats(){
+      const users = JSON.parse(localStorage.getItem('pclabUsers')||'[]').length;
+      const comps = PRODUCTS.length;
+      const builds = JSON.parse(localStorage.getItem('pclabBuilds')||'[]').length;
+      animateNum('[data-count="usuarios"]', users);
+      animateNum('[data-count="armados"]', builds);
+      animateNum('[data-count="componentes"]', comps);
+    }
+    function animateNum(sel, value){
+      const el = qs(sel); if(!el) return; const start = Number(el.textContent)||0; const dur=600; const t0=performance.now();
+      function step(t){
+        const k = Math.min(1,(t-t0)/dur); const v = Math.round(start + (value-start)*k);
+        el.textContent = v.toLocaleString('es-BO'); if(k<1) requestAnimationFrame(step);
+      } requestAnimationFrame(step);
+    }
+
+    // ====== Constructor de PC (lógica) ======
+    const STEPS = [
+      {key:'cpu', label:'CPU', category:'CPU'},
+      {key:'mb',  label:'Placa madre', category:'MB'},
+      {key:'ram', label:'RAM', category:'RAM'},
+      {key:'gpu', label:'GPU', category:'GPU'}
+    ];
+    const builderState = { step:0, selected:{ cpu:null, mb:null, ram:null, gpu:null } };
+
+    function builderRender(){
+      renderStepper();
+      renderStep();
+      renderSummary();
+      renderSavedBuilds();
+    }
+
+    function renderStepper(){
+      const el = qs('#builderSteps');
+      el.innerHTML = STEPS.map((s,idx)=>`<div class="step ${idx===builderState.step?'active':''}" role="tab" aria-selected="${idx===builderState.step}" onclick="goToStep(${idx})"><span class="dot">${idx+1}</span>${s.label}</div>`).join('');
+    }
+    function goToStep(i){ builderState.step = i; renderStepper(); renderStep(); updateNextBtn(); }
+
+    function updateNextBtn(){
+      const btn = qs('#builderNextBtn');
+      const key = STEPS[builderState.step].key; const sel = builderState.selected[key];
+      btn.disabled = !sel; btn.textContent = builderState.step===STEPS.length-1 ? 'Finalizar' : 'Siguiente →';
+    }
+
+    function renderStep(){
+      const cont = qs('#builderStepContent');
+      const step = STEPS[builderState.step];
+      let items = PRODUCTS.filter(p=>p.category===step.category);
+      // Compatibilidad
+      if(step.key==='mb' && builderState.selected.cpu){
+        const cpu = builderState.selected.cpu; items = items.filter(mb=>mb.socket===cpu.socket);
+      }
+      if(step.key==='ram' && builderState.selected.mb){
+        const mb = builderState.selected.mb; items = items.filter(r=>r.ramType===mb.ramType);
+        if(builderState.selected.cpu){ items = items.filter(r=> (builderState.selected.cpu.ramSupport||[]).includes(r.ramType)); }
+      }
+      cont.innerHTML = items.length ? `<div class="grid">${items.map(cardFor(step.key)).join('')}</div>` : `<em style="color:var(--color-text-secondary)">No hay opciones compatibles para este paso.</em>`;
+      updateNextBtn();
+    }
+
+    function cardFor(key){
+      return (p)=>{
+        const isSel = builderState.selected[key] && builderState.selected[key].id===p.id;
+        return `<div class="card selectable ${isSel?'selected':''}" data-id="${p.id}" onclick="builderSelect('${key}','${p.id}')">
+          <div class="thumb">${svgIcon(p.icon)}</div>
+          <div class="meta" style="display:flex;justify-content:space-between;align-items:center"><strong>${p.name}</strong><span class="price">${money(p.price)}</span></div>
+          <div class="features">${(p.features||[]).join(' · ')}</div>
+        </div>`;
+      }
+    }
+
+    function builderSelect(key,id){
+      const item = PRODUCTS.find(p=>p.id===id); if(!item) return;
+      // Reset dependientes si cambia algo anterior
+      if(key==='cpu'){ builderState.selected.cpu=item; builderState.selected.mb=null; builderState.selected.ram=null; }
+      if(key==='mb'){ builderState.selected.mb=item; builderState.selected.ram=null; }
+      if(key==='ram'){ builderState.selected.ram=item; }
+      if(key==='gpu'){ builderState.selected.gpu=item; }
+      renderStep(); renderSummary(); updateNextBtn();
+    }
+
+    function builderNext(){
+      const key = STEPS[builderState.step].key; if(!builderState.selected[key]){ toast('Selecciona una opción','Necesitas elegir antes de continuar','error'); return; }
+      if(builderState.step < STEPS.length-1){ builderState.step++; builderRender(); }
+      else { toast('Armado completo','Podés guardarlo en la sección Resumen','success'); }
+    }
+    function builderPrev(){ if(builderState.step>0){ builderState.step--; builderRender(); } }
+
+    function renderSummary(){
+      const s = builderState.selected; const list = qs('#builderSummaryList');
+      const rows = ['cpu','mb','ram','gpu'].map(k=> s[k] ? `<div style="display:flex;justify-content:space-between;gap:8px"><s
